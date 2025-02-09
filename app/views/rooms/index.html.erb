@@ -1,8 +1,9 @@
 <div id='chatapp'>
   <div id='rooms'>
     <div id='room-list'>
+      <%= turbo_stream_from @room.name %>
       <% @rooms.each do |room| %>
-      <%= render room %>
+        <%= render room %>
       <% end %>
     </div>
     <%= render partial: 'form', locals: {room: Room.new(name: "Room #{Room.count + 1}")} %>

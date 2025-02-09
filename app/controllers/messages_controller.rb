@@ -1,11 +1,11 @@
 class MessagesController < ApplicationController
-  before_action :set_message, only: %i[ show edit update destroy ]
+  before_action :set_message, only: %i[show edit update destroy]
 
   # GET /messages or /messages.json
   def index
     if params[:room_id]
       @room = Room.find(params[:room_id])
-      @messages = @room.messages
+      @messages = @room.messages.includes(:user)
     else
       @messages = []
     end
@@ -27,10 +27,11 @@ class MessagesController < ApplicationController
   # POST /messages or /messages.json
   def create
     @message = Message.new(message_params)
+    @message.user_id = session[:user_id]
 
     respond_to do |format|
       if @message.save
-        @message.broadcast_append_to @message.room, partial: @message, locals: { message: @message }, target: "messages-area"
+        @message.broadcast_append_to @message.room, partial: @message, locals: { message: @message }, target: "message-list"
         format.html { redirect_to @message, notice: "Message was successfully created." }
         format.json { render :show, status: :created, location: @message }
         format.turbo_stream
@@ -69,11 +70,11 @@ class MessagesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_message
-      @message = Message.find(params.expect(:id))
+      @message = Message.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
     def message_params
-      params.expect(message: [ :content, :room_id ])
+      params.require(:message).permit(:content, :room_id, :user_id)
     end
 end

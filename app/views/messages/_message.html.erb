@@ -1,4 +1,13 @@
 <div id="<%= dom_id message %>" class="message">
-    <strong><%= message.user.email_address %></strong>: <%= message.content %>
-    <%= button_to 'Delete', message, method: :delete, data: { confirm: 'Are you sure?' } %>
+    <div id='sender'>
+        <p id='email'><%= message.user.email_address %></p>
+        <p id='time'><%= message.created_at %></p>
+    </div>
+    <h3>
+        <%= message.content %>
+        <% if session[:user_id] == message.user_id %> 
+            <%= button_to 'Delete', message, method: :delete, class: 'delete' %>
+            <%# <%= button_to 'Delete', message, method: :delete, data: { turbo_action: 'replace', turbo_confirm: 'Are you sure?' } %>
+        <% end %>
+    </h3>
 </div>

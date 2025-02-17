@@ -6,7 +6,7 @@
         <i class="fa-solid fa-right-from-bracket"></i> Logout
     <% end %>
     <div id='room-list'>
-      <%= turbo_stream_from @room.name %>
+      <%= turbo_stream_from @room.name if @room%>
       <% @rooms.each do |room| %>
         <%= render room %>
       <% end %>
@@ -22,7 +22,7 @@
       </div>
       <%= render partial: 'messages/form', locals: {message: Message.new(room: @room)} %>
 
-      <%= turbo_stream_from @room %>
+      <%= turbo_stream_from @room if @room%>
     <% end %>
   </div>
 </div>
